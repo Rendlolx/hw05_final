@@ -79,7 +79,6 @@ class PostViewsTest(TestCase):
         response = self.guest_client.get(reverse('posts:main'))
         self.check_context_contains_page_or_post(response.context)
 
-
     def test_page_group_show_correct_context(self):
         response = self.guest_client.get(reverse(
             'posts:group',
@@ -147,15 +146,17 @@ class PostViewsTest(TestCase):
         )
         comment = Comment.objects.first()
         self.assertRedirects(
-            response, 
+            response,
             reverse(
-                'posts:post_detail', 
+                'posts:post_detail',
                 kwargs={'post_id': PostViewsTest.post.id}
             )
         )
         self.assertEqual(Comment.objects.count(), comment_count + 1)
         self.assertTrue(
-            Comment.objects.filter(comments_text=form_data['comments_text'],).exists()
+            Comment.objects.filter(
+                comments_text=form_data['comments_text'],
+            ).exists()
         )
         self.assertEqual(comment.comments_author, PostViewsTest.user)
 

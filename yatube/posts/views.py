@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 
 from .forms import CommentForm, PostForm
-from .models import Comment, Group, Post, User
+from .models import Comment, Follow, Group, Post, User
 from .utils import paginate_page
 
 
@@ -35,9 +35,12 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     profile = author.posts.all()
     page_obj = paginate_page(request, profile)
+    user = request.user
+    following = user.is_authenticated and author.following.exists()
     context = {
         'page_obj': page_obj,
-        'author': author
+        'author': author,
+        'following': following
     }
     return render(request, template_name, context)
 
@@ -91,7 +94,6 @@ def post_edit(request, post_id):
         files=request.FILES or None,
         instance=post
     )
-    #is_edit = post
     if form.is_valid():
         post = form.save()
         post.author = request.user
@@ -125,3 +127,20 @@ def follow_index(request):
     page_obj = paginate_page(request, posts)
 
     return render(request, 'posts/follow.html', {'page_obj': page_obj})
+
+
+@login_required
+def profile_follow(request, username):
+    author = User.objects.get(username=username)
+    user = request.user
+    if author != user:
+        Follow.objects.get_or_create(user=user, author=author)
+        return redirect('posts:profile', username=username)
+    return redirect('posts:profile', author)
+
+
+@login_required
+def profile_unfollow(request, username):
+    user = request.user
+    Follow.objects.get(user=user, author__username=username).delete()
+    return redirect('posts:profile', username)

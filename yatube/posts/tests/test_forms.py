@@ -46,7 +46,7 @@ class PostCreateFormTests(TestCase):
             author=cls.user,
             image=upload_img
         )
-        
+
         cls.form = PostForm()
 
     @classmethod
@@ -122,7 +122,7 @@ class PostCreateFormTests(TestCase):
         post_count = Post.objects.count()
         response = self.guest_client.post(
             reverse('posts:post_create'),
-            data = {
+            data={
                 'text': PostCreateFormTests.post.text,
                 'group': PostCreateFormTests.group.id,
                 'image': PostCreateFormTests.post.image
@@ -131,4 +131,4 @@ class PostCreateFormTests(TestCase):
         )
         self.assertEqual(Post.objects.count(), post_count)
 
-        self.assertRedirects(response, f'/auth/login/?next=/create/')
+        self.assertRedirects(response, '/auth/login/?next=/create/')

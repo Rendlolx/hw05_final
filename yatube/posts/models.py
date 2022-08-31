@@ -80,7 +80,7 @@ class Comment(models.Model):
         verbose_name='Комментарий',
         help_text='Комментарий'
     )
-    
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
