@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+<title>
+    {% block title %}Профайл пользователя {{ author }}{% endblock %}
+</title>
+{% block content %}
+    <div class="container py-5">        
+        <h1>Все посты пользователя {{ author }}</h1>
+        <h3>Всего постов: {{ author.posts.count }} </h3>
+        {% if following %}
+            <a class="btn btn-lg btn-light"
+                href="{% url 'posts:profile' author %}" role="button">
+                Отписаться
+            </a>
+        {% else %}
+            <a class="btn btn-lg btn-primary"
+                href="{% url 'posts:profile' author %}" role="button">
+                Подписаться
+            </a>
+        {% endif %}
+        {% for post in page_obj %}  
+            <article>
+                <ul>
+                    <li>
+                        Автор: {{ post.author }}
+                        <a href="">все посты пользователя</a>
+                    </li>
+                    <li>
+                        Дата публикации: {{ post.pub_date|date:"d E Y" }} 
+                    </li>
+                    {% thumbnail post.image "800x600" crop="center" upscale=True as im %}
+                        <img width="350" height="350" src="{{ im.url }}">
+                    {% endthumbnail %}
+                </ul>
+                <p>
+                    {{ post.text }}
+                </p>
+                <p>
+                {% if post.author %}
+                        <a class="btn btn-lg btn-primary" 
+                            href="{% url 'posts:post_edit' post.pk %}" role=button>
+                            Редактирование поста
+                        </a>
+                {% else %}
+                        <a class="btn btn-lg btn-primary"
+                            href="{% url 'posts:post_detail' post.pk %}" role=button>
+                            Подробная информация
+                        </a>
+                {% endif %} 
+                {% if post.group %}
+                    <a class="btn btn-lg btn-primary" 
+                        href="{% url 'posts:group' post.group.slug %}" role=button>
+                        Все записи группы
+                    </a>
+                {% endif %}
+                </p>
+            </article>
+            {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+        {% include 'posts/includes/paginator.html' %}
+    </div>
+{% endblock %}
