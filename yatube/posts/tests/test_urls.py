@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import Client, TestCase
 
 from ..models import Group, Post
@@ -25,6 +26,8 @@ class PostURLTest(TestCase):
         )
 
     def setUp(self):
+        cache.clear()
+
         """Неавторизованный юзер"""
         self.guest_client = Client()
 
@@ -109,7 +112,7 @@ class PostURLTest(TestCase):
             f'/profile/{PostURLTest.post.author}/': 'posts/profile.html',
             f'/posts/{PostURLTest.post.id}/': 'posts/post_detail.html',
             '/create/': 'posts/create_post.html',
-            f'/posts/{PostURLTest.post.id}/edit/': 'posts/create_post.html'
+            f'/posts/{PostURLTest.post.id}/edit/': 'posts/create_post.html',
         }
         for url, template in dict_templates.items():
             with self.subTest(url=url):
