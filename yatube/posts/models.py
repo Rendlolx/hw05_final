@@ -64,17 +64,17 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    comments_text = models.TextField()
-    comments_created = models.DateTimeField(
+    text = models.TextField()
+    created = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Дата добавления комментария'
     )
-    comments_author = models.ForeignKey(
+    author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор комментария',
     )
-    comments_post = models.ForeignKey(
+    post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
         verbose_name='Комментарий',

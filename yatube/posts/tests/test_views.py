@@ -134,7 +134,7 @@ class PostViewsTest(TestCase):
     def test_comment_on_post_page(self):
         comment_count = Comment.objects.count()
         form_data = {
-            'comments_text': f'{PostViewsTest.post.comment}'
+            'text': f'{PostViewsTest.post.comment}'
         }
         response = self.author_client.post(
             reverse(
@@ -155,10 +155,10 @@ class PostViewsTest(TestCase):
         self.assertEqual(Comment.objects.count(), comment_count + 1)
         self.assertTrue(
             Comment.objects.filter(
-                comments_text=form_data['comments_text'],
+                text=form_data['text'],
             ).exists()
         )
-        self.assertEqual(comment.comments_author, PostViewsTest.user)
+        self.assertEqual(comment.author, PostViewsTest.user)
 
     def test_create_comment_guest_client(self):
         response = self.guest_client.get(

@@ -51,7 +51,7 @@ def post_detail(request, post_id):
     form = CommentForm(request.POST or None)
 
     post = get_object_or_404(Post, pk=post_id)
-    post_comments = Comment.objects.filter(comments_post_id=post_id)
+    post_comments = Comment.objects.filter(post_id=post_id)
     author = get_object_or_404(User, id=post.author_id)
     context = {
         'form': form,
@@ -114,8 +114,8 @@ def add_comment(request, post_id):
 
     if form.is_valid():
         comment = form.save(commit=False)
-        comment.comments_author = request.user
-        comment.comments_post = post
+        comment.author = request.user
+        comment.post = post
         comment.save()
 
     return redirect('posts:post_detail', post_id)
