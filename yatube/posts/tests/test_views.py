@@ -24,7 +24,6 @@ class PostViewsTest(TestCase):
             author=cls.user,
             text='Тестовый пост',
             group=cls.group,
-            comment='Текст комментария',
         )
 
     def setUp(self):
@@ -106,8 +105,6 @@ class PostViewsTest(TestCase):
                     kwargs={'post_id': PostViewsTest.post.id})
         )
         self.check_context_contains_page_or_post(response.context, post=True)
-        self.assertIn('author', response.context)
-        self.assertEqual(response.context['author'], PostViewsTest.user)
 
     def test_create_and_page_show_correct_context(self):
         list_urls = [
@@ -134,7 +131,7 @@ class PostViewsTest(TestCase):
     def test_comment_on_post_page(self):
         comment_count = Comment.objects.count()
         form_data = {
-            'text': f'{PostViewsTest.post.comment}'
+            'text': 'Текст комментария'
         }
         response = self.author_client.post(
             reverse(
@@ -174,8 +171,7 @@ class PostViewsTest(TestCase):
         post = Post.objects.create(
             text=PostViewsTest.post.text,
             author=PostViewsTest.post.author,
-            group=PostViewsTest.group,
-            comment=PostViewsTest.post.comment
+            group=PostViewsTest.group
         )
         response = self.author_client.get(reverse('posts:main'))
         posts = response.content
