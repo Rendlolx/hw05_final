@@ -171,14 +171,15 @@ class PostViewsTest(TestCase):
 
     def test_cache_index(self):
         '''Проверка кэша главной страницы.'''
-        response = self.author_client.get(reverse('posts:main'))
-        posts = response.content
-        Post.objects.create(
+        post = Post.objects.create(
             text=PostViewsTest.post.text,
             author=PostViewsTest.post.author,
             group=PostViewsTest.group,
             comment=PostViewsTest.post.comment
         )
+        response = self.author_client.get(reverse('posts:main'))
+        posts = response.content
+        post.delete()
         response_1 = self.author_client.get(reverse('posts:main'))
         posts_1 = response_1.content
         self.assertEqual(posts_1, posts)

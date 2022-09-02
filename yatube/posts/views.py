@@ -52,11 +52,9 @@ def post_detail(request, post_id):
 
     post = get_object_or_404(Post, pk=post_id)
     post_comments = Comment.objects.filter(post_id=post_id)
-    author = get_object_or_404(User, id=post.author_id)
     context = {
         'form': form,
         'post': post,
-        'author': author,
         'post_comments': post_comments,
     }
     return render(request, template_name, context)
@@ -131,7 +129,7 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    author = User.objects.get(username=username)
+    author = get_object_or_404(User, username=username)
     user = request.user
     if author != user:
         Follow.objects.get_or_create(user=user, author=author)
@@ -142,5 +140,10 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     user = request.user
-    Follow.objects.get(user=user, author__username=username).delete()
+    qs_follow = Follow.objects.filter(
+        user=user,
+        author__username=username
+    )
+    if qs_follow.exists():
+        qs_follow.delete()
     return redirect('posts:profile', username)

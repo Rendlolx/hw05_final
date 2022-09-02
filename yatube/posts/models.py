@@ -73,12 +73,14 @@ class Comment(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор комментария',
+        related_name='comments'
     )
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
         verbose_name='Комментарий',
-        help_text='Комментарий'
+        help_text='Комментарий',
+        related_name='comments'
     )
 
 
@@ -93,3 +95,11 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='following'
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_author_user_following'
+            )
+        ]
